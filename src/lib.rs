@@ -18,6 +18,7 @@
 //! ```
 //! 
 //! ```
+//! // `build.rs` see The Cargo Book >> Build Scripts
 //! use build_my_react_js::*;
 //!
 //! fn main() {
