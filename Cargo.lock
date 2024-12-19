@@ -4,7 +4,7 @@ version = 4
 
 [[package]]
 name = "build-my-react-js"
-version = "0.1.5"
+version = "0.1.6"
 dependencies = [
  "inline_colorization",
 ]

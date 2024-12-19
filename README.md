@@ -28,6 +28,11 @@ Cargo.lock
 [...]
 ```
 
+Add to your project as a build dependency,
+```
+cargo add --build build-my-react-js
+```
+
 Add this to a build.rs file:
 ```rust
 // `build.rs`
