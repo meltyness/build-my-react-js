@@ -59,7 +59,9 @@ use std::{
 
 #[macro_export]
 macro_rules! build_react_under {
-    ($s:expr) => { ($crate::build_my_react_js($s, env!("CARGO_MANIFEST_DIR"))) }
+    ($s:expr) => {
+        ($crate::build_my_react_js($s, env!("CARGO_MANIFEST_DIR")))
+    };
 }
 
 /// This is the default flavor, it will panic on detection of major error
