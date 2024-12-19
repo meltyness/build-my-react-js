@@ -1,6 +1,6 @@
 [package]
 name = "build-my-react-js"
-version = "0.1.0"
+version = "0.1.2"
 edition = "2021"
 authors = ["T.J. Hampton <thomas.j.hampton@gmail.com>"]
 categories = ["continuous-integration", "frontend", "build"]
