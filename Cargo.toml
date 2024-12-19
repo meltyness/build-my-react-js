@@ -1,6 +1,6 @@
 [package]
 name = "build-my-react-js"
-version = "0.1.6"
+version = "0.1.7"
 edition = "2021"
 authors = ["T.J. Hampton <thomas.j.hampton@gmail.com>"]
 keywords = ["npm", "react-scripts", "frontend", "build"]
