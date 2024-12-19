@@ -20,7 +20,7 @@
 //! subdirectory containing your `package.json` this can be instructed
 //! to enter and build it. Feedback is provided through the Cargo IPC
 //! mechanism as build warnings. Panics are fatal to builds, when the
-//! commands report failure.
+//! commands report failure, but options are available, see the docs.
 //!
 //! I'm not sure how "clean" works in the npm ecosystem, but this crate
 //! assumes you start potentially without node_modules, and attempts
@@ -40,6 +40,8 @@ use core::str;
 use inline_colorization::*;
 use std::{path::PathBuf, process::Command};
 
+/// This is the default flavor, it will panic on detection of major error
+/// and generate warnings indicating progress.
 pub fn build_my_react_js(path: &str, outer_env: &str) {
     match build_my_react_js_fallible(path, outer_env, false) {
         Ok(_) => (),
@@ -47,6 +49,7 @@ pub fn build_my_react_js(path: &str, outer_env: &str) {
     }
 }
 
+/// This will panic on detection of major error and **not** generate warnings.
 pub fn build_my_react_js_silent(path: &str, outer_env: &str) {
     match build_my_react_js_fallible(path, outer_env, true) {
         Ok(_) => (),
@@ -54,6 +57,19 @@ pub fn build_my_react_js_silent(path: &str, outer_env: &str) {
     }
 }
 
+/// This performs the following:
+/// 
+/// Check for a build/index.html file, an indications that a React build
+/// has previously succeeded.
+/// 
+/// Check for NPM and connection to servers using `npm ping`
+/// If first run try NPM install to fetch deps
+/// Check for NPM and connection to servers, possibly again
+/// Attempt to build using `npm run build`
+/// 
+/// After the build has succeeded once, subsequent runs will
+/// instruct your cargo to only run `build.rs` on updates.
+/// 
 pub fn build_my_react_js_fallible(path: &str, outer_env: &str, silent: bool) -> Result<(), String> {
     let mut d = PathBuf::from(outer_env);
     d.push(format!("{path}/build/index.html"));
