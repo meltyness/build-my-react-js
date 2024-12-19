@@ -42,3 +42,18 @@ fn main() {
     build_react_under!("my-frontend");
 }
 ```
+
+Effectively, will cause cargo, during dirty / new builds,
+it will go into the directory and do:
+```
+test -e my-frontend/build/index.html
+npm ping    #only the first time
+npm install #only the first time
+npm ping
+npm run build
+```
+
+It uses a cargo facility that tests for updates to 
+`my-frontend/src/*` or `my-frontend/package.json`, and so
+usually only runs your react-scripts build if you have changed
+something.
