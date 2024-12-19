@@ -4,6 +4,19 @@
 //! It can be helpful for both development and deployment.
 //!
 //! So, as an example:
+//! 
+//! with the directory structure like
+//! 
+//! ```toml
+//! .gitignore
+//! src/
+//! my-frontend/
+//!   src/
+//!     index.js
+//!   package.json
+//! Cargo.toml
+//! ```
+//! 
 //! ```
 //! use build_my_react_js::*;
 //!
@@ -38,7 +51,7 @@
 
 use core::str;
 use inline_colorization::*;
-use std::{path::PathBuf, process::Command};
+use std::{path::{Component, PathBuf}, process::Command};
 
 /// This is the default flavor, it will panic on detection of major error
 /// and generate warnings indicating progress.
@@ -73,6 +86,8 @@ pub fn build_my_react_js_silent(path: &str, outer_env: &str) {
 pub fn build_my_react_js_fallible(path: &str, outer_env: &str, silent: bool) -> Result<(), String> {
     let mut d = PathBuf::from(outer_env);
     d.push(format!("{path}/build/index.html"));
+    if d.components().any(|z| z == Component::ParentDir || 
+        z.as_os_str().as_encoded_bytes().iter().find(|&c| *c == b'*') != None) { return Err(format!("{style_bold}{color_bright_red}ReactJS Frontend build error:{color_reset}{style_reset} Invalid separator provided."));}
     match std::fs::exists(PathBuf::from(d)) {
         Ok(defined) => {
             if defined {
@@ -97,7 +112,7 @@ pub fn build_my_react_js_fallible(path: &str, outer_env: &str, silent: bool) -> 
                             format!("Failed with: {}", str::from_utf8(&output.stdout).unwrap()),
                             silent,
                         );
-                        return Err("NPM unavailable".to_string());
+                        return Err(format!("{style_bold}{color_bright_red}ReactJS Frontend build error:{color_reset}{style_reset}NPM unavailable"));
                     } else {
                         print_warning(format!("Located NPM for frontend build."), silent);
                     }
@@ -121,12 +136,12 @@ pub fn build_my_react_js_fallible(path: &str, outer_env: &str, silent: bool) -> 
                             ),
                             silent,
                         );
-                        return Err("NPM unavailable".to_string());
+                        return Err(format!("{style_bold}{color_bright_red}ReactJS Frontend build error:{color_reset}{style_reset} NPM unavailable"));
                     } else {
                         print_warning(format!("Installed **node_modules**"), silent);
                     }
                 } else {
-                    return Err("Node Package Manager error! Check system logs.".to_string());
+                    return Err(format!("{style_bold}{color_bright_red}ReactJS Frontend build error:{color_reset}{style_reset} Node Package Manager error! Check system logs."));
                 }
             }
         }
@@ -145,13 +160,13 @@ pub fn build_my_react_js_fallible(path: &str, outer_env: &str, silent: bool) -> 
                 format!("Failed with: {}", str::from_utf8(&output.stdout).unwrap()),
                 silent,
             );
-            return Err("NPM unavailable".to_string());
+            return Err(format!("{style_bold}{color_bright_red}ReactJS Frontend build error:{color_reset}{style_reset} NPM unavailable"));
         } else {
             print_warning(format!("Located NPM for frontend build."), silent);
         }
     } else {
         return Err(
-            "Node Package Manager not found! Ensure the system is configured with npm.".to_string(),
+            format!("{style_bold}{color_bright_red}ReactJS Frontend build error:{color_reset}{style_reset} Node Package Manager not found! Ensure the system is configured with npm."),
         );
     }
 
@@ -172,12 +187,12 @@ pub fn build_my_react_js_fallible(path: &str, outer_env: &str, silent: bool) -> 
                 ),
                 silent,
             );
-            return Err("NPM unavailable".to_string());
+            return Err(format!("{style_bold}{color_bright_red}ReactJS Frontend build error:{color_reset}{style_reset} NPM unavailable"));
         } else {
             print_warning(format!("Frontend build completed successfully!"), silent);
         }
     } else {
-        return Err("Node Package Manager error! Check system logs.".to_string());
+        return Err(format!("{style_bold}{color_bright_red}ReactJS Frontend build error:{color_reset}{style_reset} Node Package Manager error! Check system logs."));
     }
 
     Ok(())

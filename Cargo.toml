@@ -2,6 +2,13 @@
 name = "build-my-react-js"
 version = "0.1.0"
 edition = "2021"
+authors = ["T.J. Hampton <thomas.j.hampton@gmail.com>"]
+categories = ["continuous-integration", "frontend", "build"]
+description = "Integrate your ReactJS with your Rust CI and build it."
+documentation = "https://docs.rs/build-my-react-js"
+keywords = ["GUI", "Filesystem", "Web programming"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/meltyness/build-my-react-app"
 
 [dependencies]
 inline_colorization = "0.1.6"
