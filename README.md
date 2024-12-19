@@ -11,7 +11,7 @@ It can be helpful for both development and deployment.
 
 So, as an example, with the directory structure like:
 
-```toml
+```text
 .
 ..
 .gitignore
