@@ -12,3 +12,4 @@ repository = "https://github.com/meltyness/build-my-react-app"
 
 [dependencies]
 inline_colorization = "0.1.6"
+lazy_static = "1.5.0"

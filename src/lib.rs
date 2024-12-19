@@ -4,9 +4,9 @@
 //! It can be helpful for both development and deployment.
 //!
 //! So, as an example:
-//! 
+//!
 //! with the directory structure like
-//! 
+//!
 //! ```toml
 //! .gitignore
 //! src/
@@ -16,13 +16,13 @@
 //!   package.json
 //! Cargo.toml
 //! ```
-//! 
+//!
 //! ```
 //! // `build.rs` see The Cargo Book >> Build Scripts
 //! use build_my_react_js::*;
 //!
 //! fn main() {
-//!     build_my_react_js("my-frontend", env!("CARGO_MANIFEST_DIR"));
+//!     build_react_under!("my-frontend");
 //! }
 //! ```
 //!
@@ -48,11 +48,19 @@
 //! - benefit from the full power of the cargo ecosystem
 //!
 //! Enjoy!
-//! 
+//!
 
 use core::str;
 use inline_colorization::*;
-use std::{path::{Component, PathBuf}, process::Command};
+use std::{
+    path::{Component, PathBuf},
+    process::Command,
+};
+
+#[macro_export]
+macro_rules! build_react_under {
+    ($s:expr) => { ($crate::build_my_react_js($s, env!("CARGO_MANIFEST_DIR"))) }
+}
 
 /// This is the default flavor, it will panic on detection of major error
 /// and generate warnings indicating progress.
@@ -72,23 +80,31 @@ pub fn build_my_react_js_silent(path: &str, outer_env: &str) {
 }
 
 /// This performs the following:
-/// 
-/// Check for a build/index.html file, an indications that a React build
-/// has previously succeeded.
-/// 
+///
+/// Check for a build/index.html file, an indication that a React build
+/// has previously succeeded in the indicated crate subdirectory
+///
 /// Check for NPM and connection to servers using `npm ping`
 /// If first run try NPM install to fetch deps
 /// Check for NPM and connection to servers, possibly again
 /// Attempt to build using `npm run build`
-/// 
+///
 /// After the build has succeeded once, subsequent runs will
 /// instruct your cargo to only run `build.rs` on updates.
-/// 
+///
 pub fn build_my_react_js_fallible(path: &str, outer_env: &str, silent: bool) -> Result<(), String> {
     let mut d = PathBuf::from(outer_env);
     d.push(format!("{path}/build/index.html"));
-    if d.components().any(|z| z == Component::ParentDir || 
-        z.as_os_str().as_encoded_bytes().iter().find(|&c| *c == b'*') != None) { return Err(format!("{style_bold}{color_bright_red}ReactJS Frontend build error:{color_reset}{style_reset} Invalid separator provided, '{path}'"));}
+    if d.components().any(|z| {
+        z == Component::ParentDir
+            || z.as_os_str()
+                .as_encoded_bytes()
+                .iter()
+                .find(|&c| *c == b'*')
+                != None
+    }) {
+        return Err(format!("{style_bold}{color_bright_red}ReactJS Frontend build error:{color_reset}{style_reset} Invalid separator provided, '{path}'"));
+    }
     match std::fs::exists(PathBuf::from(d)) {
         Ok(defined) => {
             if defined {
@@ -199,6 +215,7 @@ pub fn build_my_react_js_fallible(path: &str, outer_env: &str, silent: bool) -> 
     Ok(())
 }
 
+#[doc(hidden)]
 fn print_warning(s: String, silent: bool) {
     if !silent {
         println!("cargo::warning={}", s);
