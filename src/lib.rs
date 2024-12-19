@@ -87,7 +87,7 @@ pub fn build_my_react_js_fallible(path: &str, outer_env: &str, silent: bool) -> 
     let mut d = PathBuf::from(outer_env);
     d.push(format!("{path}/build/index.html"));
     if d.components().any(|z| z == Component::ParentDir || 
-        z.as_os_str().as_encoded_bytes().iter().find(|&c| *c == b'*') != None) { return Err(format!("{style_bold}{color_bright_red}ReactJS Frontend build error:{color_reset}{style_reset} Invalid separator provided."));}
+        z.as_os_str().as_encoded_bytes().iter().find(|&c| *c == b'*') != None) { return Err(format!("{style_bold}{color_bright_red}ReactJS Frontend build error:{color_reset}{style_reset} Invalid separator provided, '{path}'"));}
     match std::fs::exists(PathBuf::from(d)) {
         Ok(defined) => {
             if defined {
